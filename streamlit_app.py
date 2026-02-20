@@ -9,30 +9,75 @@ st.set_page_config(page_title="Three Arrows Family", page_icon="🌿", layout="w
 st.markdown("""
 <style>
 .stApp {
-    background: linear-gradient(135deg, #f3f8f3 0%, #e8f5e9 50%, #fffdf6 100%);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #6b8cff 100%);
+    background-attachment: fixed;
 }
 
 /* Header Styling */
 .org-title {
-    font-size: 38px;
+    font-size: 42px;
     font-weight: 800;
-    color: #1b5e20;
+    background: linear-gradient(45deg, #FFD700, #FFA500);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
 }
 
 .tagline {
     font-size: 18px;
-    color: #444;
+    color: #ffffff;
     margin-top: -5px;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
 }
 
 /* Button */
 .stButton > button {
-    background: linear-gradient(90deg, #1b5e20, #2e7d32);
-    color: white;
+    background: linear-gradient(90deg, #FFD700, #FFA500);
+    color: #2c3e50;
     font-size: 20px;
-    border-radius: 8px;
+    font-weight: bold;
+    border-radius: 50px;
     height: 55px;
     width: 100%;
+    border: none;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
+}
+
+.stButton > button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+}
+
+/* Form labels */
+.stTextInput label, .stNumberInput label, .stSlider label {
+    color: white !important;
+    font-size: 16px !important;
+    font-weight: 500 !important;
+}
+
+/* Consent checkbox */
+.stCheckbox label {
+    color: white !important;
+    background: rgba(255,255,255,0.1);
+    padding: 15px;
+    border-radius: 10px;
+    border-left: 4px solid #FFD700;
+}
+
+/* Form container */
+[data-testid="stForm"] {
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(10px);
+    padding: 30px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+/* Success/Error messages */
+.stAlert {
+    border-radius: 10px;
+    border-left: 4px solid #FFD700;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -72,81 +117,121 @@ if generate:
         st.error("Please enter your name and accept consent.")
     else:
         width, height = 1800, 1200
-        certificate = Image.new("RGB", (width, height), "#fffdf5")
+        certificate = Image.new("RGB", (width, height), "#faf7f2")  # Cream background
         draw = ImageDraw.Draw(certificate)
 
-        # Border
-        draw.rectangle([(40, 40), (width-40, height-40)], outline=(184,134,11), width=15)
+        # Minimalist border - just a thin elegant line
+        draw.rectangle([(50, 50), (width-50, height-50)], outline="#d4af37", width=3)
+        
+        # Decorative corner elements
+        corner_length = 60
+        # Top-left corner
+        draw.line([(50, 50), (50+corner_length, 50)], fill="#d4af37", width=3)
+        draw.line([(50, 50), (50, 50+corner_length)], fill="#d4af37", width=3)
+        # Top-right corner
+        draw.line([(width-50, 50), (width-50-corner_length, 50)], fill="#d4af37", width=3)
+        draw.line([(width-50, 50), (width-50, 50+corner_length)], fill="#d4af37", width=3)
+        # Bottom-left corner
+        draw.line([(50, height-50), (50+corner_length, height-50)], fill="#d4af37", width=3)
+        draw.line([(50, height-50), (50, height-50-corner_length)], fill="#d4af37", width=3)
+        # Bottom-right corner
+        draw.line([(width-50, height-50), (width-50-corner_length, height-50)], fill="#d4af37", width=3)
+        draw.line([(width-50, height-50), (width-50, height-50-corner_length)], fill="#d4af37", width=3)
+
+        # Subtle background pattern (dots)
+        for i in range(20, width, 40):
+            for j in range(20, height, 40):
+                draw.point((i, j), fill="#e8e0d0")
 
         # Load Logo
-        logo = Image.open("logo.jpeg").resize((180, 180))
-        certificate.paste(logo, (120, 100))
+        logo = Image.open("logo.jpeg").resize((160, 160))
+        certificate.paste(logo, (140, 100))
 
         try:
-            title_font = ImageFont.truetype("arial.ttf", 85)
-            name_font = ImageFont.truetype("arial.ttf", 95)
-            body_font = ImageFont.truetype("arial.ttf", 45)
-            sign_font = ImageFont.truetype("arial.ttf", 40)
+            title_font = ImageFont.truetype("arial.ttf", 75)
+            name_font = ImageFont.truetype("arial.ttf", 110)  # Bigger for name
+            age_font = ImageFont.truetype("arial.ttf", 50)    # Special font for age
+            body_font = ImageFont.truetype("arial.ttf", 42)
+            small_font = ImageFont.truetype("arial.ttf", 35)
         except:
             title_font = ImageFont.load_default()
             name_font = ImageFont.load_default()
+            age_font = ImageFont.load_default()
             body_font = ImageFont.load_default()
-            sign_font = ImageFont.load_default()
+            small_font = ImageFont.load_default()
 
-        # Organization Name beside logo
-        draw.text((350, 160),
+        # Organization Name
+        draw.text((350, 165),
                   "THREE ARROWS FAMILY",
                   font=body_font,
-                  fill="#1b5e20")
+                  fill="#2c5f2d")
 
-        # Certificate Title
-        draw.text((width/2, 400),
-                  "Certificate of Digital Discipline",
+        # Certificate Title with decorative line
+        title = "Certificate of Digital Discipline"
+        draw.text((width/2, 380),
+                  title,
                   font=title_font,
-                  fill="#1b5e20",
+                  fill="#2c5f2d",
                   anchor="mm")
+        
+        # Decorative line under title
+        draw.line([(width/2-200, 430), (width/2+200, 430)], fill="#d4af37", width=2)
 
-        # Name in CENTER (BIG & BOLD)
-        draw.text((width/2, 600),
+        # Name in GOLD (BIG & BOLD)
+        draw.text((width/2, 550),
                   name.upper(),
                   font=name_font,
-                  fill="#b8860b",
-                  anchor="mm")
+                  fill="#b8860b",  # Gold color
+                  anchor="mm",
+                  stroke_width=1,
+                  stroke_fill="#8b6910")
 
-        # Age below name
-        draw.text((width/2, 680),
+        # Age in BLUE (different color)
+        draw.text((width/2, 640),
                   f"Age: {age} Years",
-                  font=body_font,
-                  fill="#1b5e20",
+                  font=age_font,
+                  fill="#1e4b8c",  # Deep blue
                   anchor="mm")
 
         today = datetime.date.today().strftime("%d %B %Y")
 
-        body_text = f"""
-has taken a conscious pledge to reduce digital distractions.
+        # Main body text with inspiring points
+        body_text = f"""has made a conscious decision to embrace digital wellbeing and mindful living.
 
-The participant reported spending approximately {hours} hours
-daily on social media and reel consumption.
+🌟 Digital Balance Commitment 🌟
 
-This pledge is voluntarily made on {today}.
-"""
+By reducing daily screen time from {hours} hours, you're choosing to:
+• Reclaim precious moments for real connections
+• Nurture your mental clarity and focus
+• Discover joy in offline activities
+• Build stronger relationships with loved ones
 
-        draw.multiline_text((width/2, 850),
+"Every minute away from the screen is an investment in yourself."
+
+This pledge is voluntarily made on {today}"""
+
+        draw.multiline_text((width/2, 830),
                             body_text,
                             font=body_font,
-                            fill="black",
+                            fill="#2c3e50",
                             anchor="mm",
                             align="center",
-                            spacing=20)
+                            spacing=25)
 
-        # Signature Section
-        draw.line((width-600, height-250, width-200, height-250),
-                  fill="black", width=3)
+        # Inspirational quote at bottom
+        quote = "🌱 Small changes lead to extraordinary transformations 🌱"
+        draw.text((width/2, 1050),
+                  quote,
+                  font=small_font,
+                  fill="#6b8e23",
+                  anchor="mm")
 
-        draw.text((width-400, height-220),
-                  "Signed by Three Arrows Family",
-                  font=sign_font,
-                  fill="#1b5e20",
+        # Minimal certificate number
+        cert_number = f"Cert No: 3AF-{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}"
+        draw.text((width-200, height-60),
+                  cert_number,
+                  font=small_font,
+                  fill="#a9a9a9",
                   anchor="mm")
 
         # Save PNG
@@ -154,14 +239,20 @@ This pledge is voluntarily made on {today}.
         certificate.save(buffer, format="PNG")
         buffer.seek(0)
 
-        st.markdown("## 🎉 Certificate Preview")
+        st.markdown("## 🎉 Your Beautiful Certificate")
         st.image(certificate, use_column_width=True)
 
         st.download_button(
             label="📥 Download Certificate (PNG)",
             data=buffer,
-            file_name=f"{name}_certificate.png",
+            file_name=f"{name}_digital_discipline_certificate.png",
             mime="image/png"
         )
 
-        st.success("Certificate Generated Successfully 🌿")
+        st.balloons()
+        st.success("""
+        ✨ Certificate Generated Successfully! 
+        
+        Remember: Your journey to digital wellbeing starts today. 
+        Every mindful moment away from the screen is a victory! 🌿
+        """)
