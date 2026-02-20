@@ -20,7 +20,7 @@ st.markdown("""
     text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
     margin: 0;
 }
-/* Input visibility for M.Tech project standards */
+/* Input visibility for high-standard project presentation */
 [data-testid="stTextInput"] input {
     background-color: #f0f8ff !important;
     color: #004d40 !important; 
@@ -101,7 +101,7 @@ if generate:
         draw.rectangle([(40, 40), (width-40, height-40)], outline=GOLD, width=20)
         draw.rectangle([(margin_inner, margin_inner), (width-margin_inner, height-margin_inner)], outline=DEEP_BLUE, width=4)
 
-        # 3. Custom Fonts (Using Playfair and Montserrat files from your repo)
+        # 3. Custom Fonts (Playfair and Montserrat files)
         try:
             f_branding = ImageFont.truetype("PlayfairDisplay-Bold.ttf", 100) 
             f_title = ImageFont.truetype("PlayfairDisplay-Bold.ttf", 80)
@@ -122,14 +122,14 @@ if generate:
         except: pass
 
         # 5. SIDEBAR CONTENT
-        # Left Side: Adopt Real Life (as requested in previous turn)
+        # Left Side: Adopt Real Life
         x_left = 130
         draw.text((x_left, 480), "ADOPT REAL LIFE:", font=f_side_title, fill=GOLD)
         activities = ["• Connect with society deeply", "• Adopt sports and discipline", "• Serve and volunteer daily", "• Set and pursue clear goals"]
         for i, a in enumerate(activities):
             draw.text((x_left, 540 + (i*55)), a, font=f_side_body, fill=DEEP_BLUE)
 
-        # Right Side: Key Findings (Shifted right as requested)
+        # Right Side: Key Findings (Positioned right)
         x_right = width - 600
         draw.text((x_right, 480), "KEY FINDINGS (2023-2025):", font=f_side_title, fill=GOLD)
         findings = ["• Short videos = repeated hits", "• More dopamine = less motivation", "• Passive scrolling = anxiety", "• Pleasure steals confidence"]
@@ -141,21 +141,28 @@ if generate:
         draw.text((width//2, 300), "A Shared Service Since 2014 | Step Into Life", font=f_body, fill=GOLD, anchor="mm")
         draw.text((width//2, 420), "CERTIFICATE OF DIGITAL DISCIPLINE", font=f_title, fill=DEEP_BLUE, anchor="mm")
 
-        # Name: Moved further down for better layout
-        draw.text((width//2, 650), "PROUDLY PRESENTED TO:", font=f_body, fill="#555555", anchor="mm")
-        draw.text((width//2, 780), name.upper(), font=f_name, fill=DEEP_BLUE, anchor="mm")
+        # Name Section: Shifted further down as requested
+        name_y_label = 700
+        name_y_text = 830
+        draw.text((width//2, name_y_label), "PROUDLY PRESENTED TO:", font=f_body, fill="#555555", anchor="mm")
+        draw.text((width//2, name_y_text), name.upper(), font=f_name, fill=DEEP_BLUE, anchor="mm")
 
-        # Commitment Pledge (Positioned below name)
-        draw.text((width//2, 1000), "COMMITMENT PLEDGE", font=f_title, fill=DEEP_BLUE, anchor="mm")
+        # Commitment Pledge: Positioned below name
+        draw.text((width//2, 1030), "COMMITMENT PLEDGE", font=f_title, fill=DEEP_BLUE, anchor="mm")
         pledge_text = f"Reducing daily screen time from {hours} hours to reclaim focus and confidence.\nPrioritizing the Real World over the Virtual World."
-        draw.multiline_text((width//2, 1090), pledge_text, font=f_body, fill="#333333", anchor="mm", align="center")
+        draw.multiline_text((width//2, 1120), pledge_text, font=f_body, fill="#333333", anchor="mm", align="center")
 
-        # 7. FOOTER (Safely inside boundaries)
-        footer_y = 1180
+        # 7. FOOTER (Strictly within boundaries)
+        footer_y_base = 1180
+        footer_y_secondary = 1210
         today = datetime.date.today().strftime("%d %B %Y")
-        draw.text((150, footer_y), f"Date: {today}", font=f_footer, fill="#777777")
-        draw.text((width//2, footer_y), f"Verification ID: {cert_id}", font=f_footer, fill=DEEP_BLUE, anchor="mm")
-        draw.text((width-500, footer_y), "Verify at: www.threearrowsfamily.org.in", font=f_footer, fill="#777777")
+        
+        # Left-aligned footer information
+        draw.text((150, footer_y_base), f"Date: {today}", font=f_footer, fill="#777777")
+        draw.text((150, footer_y_secondary), "Verify at: www.threearrowsfamily.org.in", font=f_footer, fill="#777777")
+        
+        # Center-aligned Verification ID
+        draw.text((width//2, footer_y_base), f"Verification ID: {cert_id}", font=f_footer, fill=DEEP_BLUE, anchor="mm")
 
         # 8. OUTPUT
         buf = io.BytesIO()
