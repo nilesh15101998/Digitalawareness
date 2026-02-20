@@ -116,16 +116,17 @@ if generate:
     if name == "" or not consent:
         st.error("Please enter your name and accept consent.")
     else:
-        width, height = 1800, 1200
+        # Reduced dimensions from 1800x1200 to 1500x1000
+        width, height = 1500, 1000
         certificate = Image.new("RGB", (width, height), "#faf7f2")  # Cream background
         draw = ImageDraw.Draw(certificate)
 
-        # Minimal border - 70% reduced from original (was 50px margin, now 150px from edges for more content space)
-        margin = 150  # Increased margin to reduce border area by 70%
+        # Border with increased margin for more content space
+        margin = 120
         draw.rectangle([(margin, margin), (width-margin, height-margin)], outline="#d4af37", width=2)
         
-        # Decorative corner elements - smaller and subtle
-        corner_length = 40
+        # Decorative corner elements
+        corner_length = 30
         # Top-left corner
         draw.line([(margin, margin), (margin+corner_length, margin)], fill="#d4af37", width=2)
         draw.line([(margin, margin), (margin, margin+corner_length)], fill="#d4af37", width=2)
@@ -139,127 +140,128 @@ if generate:
         draw.line([(width-margin, height-margin), (width-margin-corner_length, height-margin)], fill="#d4af37", width=2)
         draw.line([(width-margin, height-margin), (width-margin, height-margin-corner_length)], fill="#d4af37", width=2)
 
-        # Subtle background pattern (dots) - sparser
-        for i in range(50, width, 60):
-            for j in range(50, height, 60):
-                draw.point((i, j), fill="#e8e0d0")
-
-        # Load Logo - LARGER size (240x240 instead of 160x160)
-        logo = Image.open("logo.jpeg").resize((240, 240))
-        certificate.paste(logo, (180, 100))
-
         try:
-            title_font = ImageFont.truetype("arial.ttf", 70)
-            org_font = ImageFont.truetype("arial.ttf", 65)  # Larger for org name
-            name_font = ImageFont.truetype("arial.ttf", 130)  # Much bigger for name
-            age_font = ImageFont.truetype("arial.ttf", 55)    # Larger for age
-            body_font = ImageFont.truetype("arial.ttf", 48)   # Larger body text
-            small_font = ImageFont.truetype("arial.ttf", 40)
+            # Adjusted font sizes for new dimensions
+            title_font = ImageFont.truetype("arial.ttf", 55)
+            org_font = ImageFont.truetype("arial.ttf", 45)
+            name_font = ImageFont.truetype("arial.ttf", 80)  # Reduced from 130
+            reg_font = ImageFont.truetype("arial.ttf", 25)
+            age_font = ImageFont.truetype("arial.ttf", 40)
+            body_font = ImageFont.truetype("arial.ttf", 35)
+            small_font = ImageFont.truetype("arial.ttf", 30)
         except:
             title_font = ImageFont.load_default()
             org_font = ImageFont.load_default()
             name_font = ImageFont.load_default()
+            reg_font = ImageFont.load_default()
             age_font = ImageFont.load_default()
             body_font = ImageFont.load_default()
             small_font = ImageFont.load_default()
 
-        # Organization Name - BOLD and CENTERED, positioned to the right of logo
+        # Load Logo - Properly sized and positioned
+        logo = Image.open("logo.jpeg").resize((180, 180))  # Reduced from 240
+        certificate.paste(logo, (150, 80))  # Adjusted position
+
+        # Registration Number (from logo text)
+        draw.text((350, 135),
+                  "Reg: 202501331004127",
+                  font=reg_font,
+                  fill="#666666")
+
+        # Organization Name - Properly positioned
         org_text = "THREE ARROWS FAMILY"
-        # Get text size to center it properly
         bbox = draw.textbbox((0, 0), org_text, font=org_font)
         text_width = bbox[2] - bbox[0]
         org_x = (width - text_width) // 2  # Center horizontally
-        draw.text((org_x, 220),
+        draw.text((org_x, 160),
                   org_text,
                   font=org_font,
                   fill="#2c5f2d",
-                  stroke_width=2,
+                  stroke_width=1,
                   stroke_fill="#1a3f1a")
 
-        # Certificate Title with decorative line
+        # Certificate Title
         title = "Certificate of Digital Discipline"
-        draw.text((width/2, 380),
+        draw.text((width/2, 250),
                   title,
                   font=title_font,
                   fill="#2c5f2d",
                   anchor="mm")
         
         # Decorative line under title
-        draw.line([(width/2-250, 430), (width/2+250, 430)], fill="#d4af37", width=3)
+        draw.line([(width/2-200, 290), (width/2+200, 290)], fill="#d4af37", width=2)
 
-        # Name in GOLD - VERY BIG AND BOLD
+        # User Name - Big and Bold but properly sized
         name_upper = name.upper()
-        draw.text((width/2, 550),
+        draw.text((width/2, 370),
                   name_upper,
                   font=name_font,
-                  fill="#b8860b",  # Gold color
+                  fill="#b8860b",
                   anchor="mm",
                   stroke_width=2,
                   stroke_fill="#8b6910")
 
-        # Age in BLUE - BIGGER
-        draw.text((width/2, 650),
+        # Age
+        draw.text((width/2, 430),
                   f"Age: {age} Years",
                   font=age_font,
-                  fill="#1e4b8c",  # Deep blue
-                  anchor="mm",
-                  stroke_width=1,
-                  stroke_fill="#0a2351")
+                  fill="#1e4b8c",
+                  anchor="mm")
 
         today = datetime.date.today().strftime("%d %B %Y")
 
-        # Main body text - LARGER and more prominent
+        # Main body text
         intro_text = "has made a conscious decision to embrace digital wellbeing and mindful living"
-        draw.multiline_text((width/2, 750),
+        draw.multiline_text((width/2, 500),
                             intro_text,
                             font=body_font,
                             fill="#2c3e50",
                             anchor="mm",
                             align="center",
-                            spacing=10)
+                            spacing=5)
 
-        # Digital Balance Commitment - BIGGER HEADER
-        draw.text((width/2, 830),
-                  "🌟 Digital Balance Commitment 🌟",
+        # Digital Balance Commitment Header
+        draw.text((width/2, 570),
+                  "Digital Balance Commitment",
                   font=body_font,
                   fill="#6b8e23",
                   anchor="mm")
 
-        # Benefits text - LARGER
+        # Benefits text
         benefits = f"""By reducing daily screen time from {hours} hours, you're choosing to:
+
 • Reclaim precious moments for real connections
 • Nurture your mental clarity and focus
 • Discover joy in offline activities
 • Build stronger relationships with loved ones"""
 
-        draw.multiline_text((width/2, 930),
+        draw.multiline_text((width/2, 680),
                             benefits,
                             font=small_font,
                             fill="#2c3e50",
                             anchor="mm",
                             align="center",
-                            spacing=15)
+                            spacing=8)
 
-        # Inspirational quote at bottom - BIGGER
+        # Inspirational quote
         quote = "✨ Every minute away from the screen is an investment in yourself! ✨"
-        draw.text((width/2, 1050),
+        draw.text((width/2, 850),
                   quote,
-                  font=body_font,
+                  font=small_font,
                   fill="#b8860b",
                   anchor="mm")
 
-        # Minimal certificate number
+        # Certificate number and date at bottom
         cert_number = f"Cert No: 3AF-{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}"
-        draw.text((width-200, height-80),
+        draw.text((width-200, height-70),
                   cert_number,
-                  font=small_font,
+                  font=reg_font,
                   fill="#a9a9a9",
                   anchor="mm")
 
-        # Date at bottom
-        draw.text((200, height-80),
+        draw.text((200, height-70),
                   f"Date: {today}",
-                  font=small_font,
+                  font=reg_font,
                   fill="#a9a9a9",
                   anchor="mm")
 
@@ -268,7 +270,7 @@ if generate:
         certificate.save(buffer, format="PNG")
         buffer.seek(0)
 
-        st.markdown("## 🎉 Your Beautiful Certificate")
+        st.markdown("## 🎉 Your Certificate")
         st.image(certificate, use_column_width=True)
 
         st.download_button(
