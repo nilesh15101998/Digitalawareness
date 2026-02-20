@@ -149,7 +149,7 @@ if generate:
 
         # Commitment Pledge: Positioned below name
         draw.text((width//2, 1030), "COMMITMENT PLEDGE", font=f_title, fill=DEEP_BLUE, anchor="mm")
-        pledge_text = f"Reducing daily screen time from {hours} hours to 2 hours for reclaim focus and confidence.\nPrioritizing the Real World over the Virtual World."
+        pledge_text = f"Reducing daily screen time from {hours} hours to reclaim focus and confidence.\nPrioritizing the Real World over the Virtual World."
         draw.multiline_text((width//2, 1120), pledge_text, font=f_body, fill="#333333", anchor="mm", align="center")
 
         # 7. FOOTER (Strictly within boundaries)
