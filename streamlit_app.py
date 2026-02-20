@@ -2,143 +2,188 @@ import streamlit as st
 from PIL import Image, ImageDraw, ImageFont
 import datetime
 import io
+import hashlib
 
 # --- PAGE CONFIGURATION ---
-st.set_page_config(page_title="Three Arrows Family", page_icon="🌿", layout="wide")
+st.set_page_config(page_title="Three Arrows Family", page_icon="🏹", layout="wide")
 
-# --- WEBSITE CSS STYLING ---
+# --- IMPROVED WEBSITE CSS ---
 st.markdown("""
 <style>
 .stApp {
-    background: linear-gradient(135deg, #0f4c3a 0%, #1e6b4c 50%, #0d5e3f 100%);
+    background: linear-gradient(135deg, #0d3b2e 0%, #1b5e46 50%, #0a4d34 100%);
 }
 
 .org-title {
-    font-size: 48px;
+    font-size: 52px;
     font-weight: 900;
     color: #FFD700;
-    text-shadow: 3px 3px 6px rgba(0,0,0,0.5);
-    font-family: 'Arial Black', sans-serif;
+    text-align: center;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    margin-bottom: 0px;
 }
 
-/* FIX: Name input text color visibility */
+.tagline {
+    font-size: 20px;
+    color: #ECF0F1;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+/* FIX: Input text visibility (Dark Green on Light Backgrounds) */
 [data-testid="stTextInput"] input {
-    background-color: #E8F0FE !important;
-    color: #0f4c3a !important; /* Forces text to be dark green/visible */
+    background-color: #f0f8ff !important;
+    color: #004d40 !important; 
     border: 3px solid #FFD700 !important;
-    border-radius: 8px;
-    font-size: 18px !important;
-    font-weight: bold !important;
-    padding: 10px !important;
+    font-size: 20px !important;
+    font-weight: 800 !important;
 }
 
 [data-testid="stNumberInput"] input {
-    background-color: #FFE5B4 !important;
-    color: #0f4c3a !important;
+    background-color: #fff9e6 !important;
+    color: #004d40 !important;
     border: 3px solid #FFD700 !important;
-    border-radius: 8px;
-    font-size: 18px !important;
+    font-size: 20px !important;
+    font-weight: 800 !important;
+}
+
+.pledge-container {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #FFD700;
+    margin-bottom: 20px;
 }
 
 .stButton > button {
     background: linear-gradient(90deg, #FFD700, #FFA500);
-    color: #0f4c3a;
-    font-size: 24px;
-    font-weight: 900;
-    border-radius: 12px;
-    height: 70px;
-    width: 100%;
+    color: #0d3b2e;
+    font-size: 22px;
+    font-weight: bold;
+    border-radius: 50px;
+    height: 60px;
+    transition: 0.3s;
 }
 </style>
 """, unsafe_allow_html=True)
 
-# --- HEADER ---
-col1, col2 = st.columns([1,6])
+# --- HEADER SECTION ---
+st.markdown("<div class='org-title'>THREE ARROWS FAMILY</div>", unsafe_allow_html=True)
+st.markdown("<div class='tagline'>A Sacred Service Since 2014 | Reg: 2025013310014127</div>", unsafe_allow_html=True)
+
+# --- USER FORM ---
+col1, col2 = st.columns(2)
 with col1:
-    try:
-        st.image("logo.jpeg", width=130)
-    except:
-        st.write("🏹")
+    name = st.text_input("👤 FULL NAME", placeholder="Enter your full name")
+    hours = st.slider("📱 CURRENT DAILY SCROLLING (HRS)", 0, 15, 4)
 
 with col2:
-    st.markdown("<div class='org-title'>THREE ARROWS FAMILY</div>", unsafe_allow_html=True)
-    st.markdown("<p style='color:white;'>A Sacred Service Since 2014</p>", unsafe_allow_html=True)
+    age = st.number_input("🎂 YOUR AGE", min_value=5, max_value=100, value=25)
+    st.info("💡 Step Out of the Phone, Step Into Life!")
 
-# --- FORM ---
-col_f1, col_f2 = st.columns(2)
-with col_f1:
-    name = st.text_input("👤 FULL NAME", placeholder="Enter your name here")
-    hours = st.slider("📱 CURRENT SCREEN TIME (HRS)", 0, 15, 5)
+st.markdown("### 📋 The Digital Discipline Pledge")
+with st.container():
+    st.markdown("""
+    <div class='pledge-container'>
+        <p style='color: white; font-size: 16px;'>
+        ✓ I commit to <b>Stop the Virtual</b> and <b>Live the Real Life</b>.<br>
+        ✓ I recognize that easy pleasure (scrolling) steals my tomorrow's confidence.<br>
+        ✓ I will replace screen time with sports, society connection, and clear goals.<br>
+        ✓ I commit to reducing my scrolling to reclaim focus and motivation.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
 
-with col_f2:
-    age = st.number_input("🎂 AGE", min_value=5, max_value=100, value=25)
+consent = st.checkbox("✅ I accept this pledge for a better Digital Wellness")
+generate = st.button("🎨 GENERATE MY CERTIFICATE", use_container_width=True)
 
-consent = st.checkbox("✅ I accept the Digital Wellbeing Pledge")
-generate = st.button("🎨 GENERATE CERTIFICATE")
-
-# --- CERTIFICATE LOGIC ---
+# --- CERTIFICATE GENERATION LOGIC ---
 if generate:
     if not name or not consent:
-        st.error("Please fill in your name and accept the pledge.")
+        st.error("⚠️ Please provide your name and accept the pledge first!")
     else:
-        width, height = 1500, 1100
-        GOLD, DEEP_BLUE, CREAM = "#C5A028", "#1B4D3E", "#FDFBF7"
+        # 1. Canvas Dimensions
+        width, height = 1500, 1050
+        DEEP_BLUE, GOLD, CREAM = "#1B4D3E", "#C5A028", "#FDFBF7"
         cert = Image.new("RGB", (width, height), CREAM)
         draw = ImageDraw.Draw(cert)
 
-        # Borders
-        draw.rectangle([(25, 25), (width-25, height-25)], outline=GOLD, width=15)
-        draw.rectangle([(45, 45), (width-45, height-45)], outline=DEEP_BLUE, width=3)
+        # 2. UNIQUE ID GENERATION
+        # Generates a short unique hex code based on Name and Timestamp
+        unique_hash = hashlib.md5(f"{name}{datetime.datetime.now()}".encode()).hexdigest()[:4].upper()
+        cert_id = f"3AF-{datetime.date.today().year}-{unique_hash}"
 
-        # Fonts
+        # 3. Border (Reduced Margin)
+        margin = 35 
+        draw.rectangle([(margin, margin), (width-margin, height-margin)], outline=GOLD, width=12)
+        draw.rectangle([(margin+15, margin+15), (width-margin-15, height-margin-15)], outline=DEEP_BLUE, width=3)
+
+        # 4. Fonts
         try:
-            title_f = ImageFont.truetype("arialbd.ttf", 70)
-            sub_f = ImageFont.truetype("ariali.ttf", 35)
-            name_f = ImageFont.truetype("arialbd.ttf", 120)
-            body_f = ImageFont.truetype("arial.ttf", 35)
-            bold_f = ImageFont.truetype("arialbd.ttf", 40)
+            f_title = ImageFont.truetype("arialbd.ttf", 75)
+            f_subtitle = ImageFont.truetype("arial.ttf", 35)
+            f_name = ImageFont.truetype("arialbd.ttf", 130)
+            f_body = ImageFont.truetype("arial.ttf", 42)
+            f_bold_body = ImageFont.truetype("arialbd.ttf", 44)
+            f_footer = ImageFont.truetype("arial.ttf", 28)
         except:
-            title_f = sub_f = name_f = body_f = bold_f = ImageFont.load_default()
+            f_title = f_name = f_bold_body = ImageFont.load_default()
+            f_subtitle = f_body = f_footer = ImageFont.load_default()
 
-        # Logo
+        # 5. Content Placement
         try:
-            logo = Image.open("logo.jpeg").resize((180, 180))
-            cert.paste(logo, (width//2 - 90, 60))
+            logo = Image.open("logo.jpeg").resize((160, 160))
+            cert.paste(logo, (width//2 - 80, 70))
         except:
             pass
 
-        # Text Elements
-        draw.text((width//2, 280), "THREE ARROWS FAMILY", font=title_f, fill=DEEP_BLUE, anchor="mm")
-        draw.text((width//2, 340), "A Sacred Service Since 2014", font=sub_f, fill=GOLD, anchor="mm")
-        draw.text((width//2, 420), "CERTIFICATE OF DIGITAL WELLNESS", font=title_f, fill=DEEP_BLUE, anchor="mm")
+        draw.text((width//2, 260), "THREE ARROWS FAMILY", font=f_title, fill=DEEP_BLUE, anchor="mm")
+        draw.text((width//2, 320), "A Sacred Service Since 2014 | Reg: 2025013310014127", font=f_subtitle, fill=GOLD, anchor="mm")
+        draw.text((width//2, 400), "CERTIFICATE OF DIGITAL DISCIPLINE", font=f_bold_body, fill=DEEP_BLUE, anchor="mm")
+        draw.text((width//2, 460), "✨ LIVE THE REAL LIFE, STOP THE VIRTUAL! ✨", font=f_subtitle, fill=GOLD, anchor="mm")
 
-        # NAME (No Box)
-        draw.text((width//2, 500), "This certificate is proudly presented to", font=body_f, fill="#666666", anchor="mm")
-        draw.text((width//2, 600), name.upper(), font=name_f, fill=DEEP_BLUE, anchor="mm")
-        draw.text((width//2, 680), f"Age: {age} Years", font=bold_f, fill=GOLD, anchor="mm")
-
-        # BENEFITS SECTION
-        draw.text((width//2, 760), "✦ RECOGNIZED BENEFITS OF THIS COMMITMENT ✦", font=bold_f, fill=DEEP_BLUE, anchor="mm")
+        # NAME (Clean - No Box)
+        draw.text((width//2, 530), "Proudly presented to", font=f_body, fill="#555555", anchor="mm")
+        draw.text((width//2, 620), name.upper(), font=f_name, fill=DEEP_BLUE, anchor="mm")
         
-        benefits = [
-            "• Enhanced Mental Clarity and Focus on Life Goals",
-            "• Improved Sleep Quality and Physical Energy Levels",
-            "• Deepened Real-World Connections with Family and Society",
-            "• Reduced Anxiety and Freedom from Mindless Scrolling",
-            "• Increased Productivity and Time for Personal Growth"
+        # High-Contrast Age Box
+        age_box = [width//2 - 180, 700, width//2 + 180, 770]
+        draw.rectangle(age_box, fill="#FFE5B4", outline=DEEP_BLUE, width=2)
+        draw.text((width//2, 735), f"AGE: {age} YEARS", font=f_bold_body, fill=DEEP_BLUE, anchor="mm")
+
+        # BENEFITS/COMMITMENTS
+        y_benefits = 830
+        draw.text((width//2, y_benefits), "MY COMMITMENT TO DIGITAL WELLNESS", font=f_bold_body, fill=DEEP_BLUE, anchor="mm")
+        
+        commitment_lines = [
+            f"• Reducing daily screen time from {hours} hrs to {max(1, hours-1)} hrs to regain focus.",
+            "• Adopting real-life activities: Society connection, sports, and volunteering.",
+            "• Guarding my dopamine hits to maintain high motivation and clear goals.",
+            "• Prioritizing the Real Life over the Virtual World."
         ]
         
-        y_text = 810
-        for line in benefits:
-            draw.text((width//2, y_text), line, font=body_f, fill="#333333", anchor="mm")
+        y_text = y_benefits + 50
+        for line in commitment_lines:
+            draw.text((width//2, y_text), line, font=f_body, fill="#333333", anchor="mm")
             y_text += 45
 
-        # Footer
+        # 6. Footer (Including the New Certificate ID)
         today = datetime.date.today().strftime("%d %B %Y")
-        draw.text((width//2, 1040), f"Date: {today}  |  Verify at: www.threearrowsfamily.org.in", font=body_f, fill="#666666", anchor="mm")
+        draw.text((150, 1000), f"Date: {today}", font=f_footer, fill="#777777")
+        draw.text((width//2, 1000), f"Certificate ID: {cert_id}", font=f_footer, fill=DEEP_BLUE, anchor="mm")
+        draw.text((width-450, 1000), "Verify at: www.threearrowsfamily.org.in", font=f_footer, fill="#777777")
 
-        # Download
+        # 7. Output
         buf = io.BytesIO()
-        cert.save(buf, format="JPEG")
+        cert.save(buf, format="JPEG", quality=100)
+        
+        st.markdown("---")
         st.image(cert, use_container_width=True)
-        st.download_button("📥 DOWNLOAD CERTIFICATE", data=buf.getvalue(), file_name=f"Cert_{name}.jpg", mime="image/jpeg")
+        st.download_button(
+            label="📥 DOWNLOAD MY OFFICIAL CERTIFICATE",
+            data=buf.getvalue(),
+            file_name=f"Digital_Discipline_{cert_id}.jpg",
+            mime="image/jpeg",
+            use_container_width=True
+        )
+        st.balloons()
