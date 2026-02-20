@@ -120,51 +120,61 @@ if generate:
         certificate = Image.new("RGB", (width, height), "#faf7f2")  # Cream background
         draw = ImageDraw.Draw(certificate)
 
-        # Minimalist border - just a thin elegant line
-        draw.rectangle([(50, 50), (width-50, height-50)], outline="#d4af37", width=3)
+        # Minimal border - 70% reduced from original (was 50px margin, now 150px from edges for more content space)
+        margin = 150  # Increased margin to reduce border area by 70%
+        draw.rectangle([(margin, margin), (width-margin, height-margin)], outline="#d4af37", width=2)
         
-        # Decorative corner elements
-        corner_length = 60
+        # Decorative corner elements - smaller and subtle
+        corner_length = 40
         # Top-left corner
-        draw.line([(50, 50), (50+corner_length, 50)], fill="#d4af37", width=3)
-        draw.line([(50, 50), (50, 50+corner_length)], fill="#d4af37", width=3)
+        draw.line([(margin, margin), (margin+corner_length, margin)], fill="#d4af37", width=2)
+        draw.line([(margin, margin), (margin, margin+corner_length)], fill="#d4af37", width=2)
         # Top-right corner
-        draw.line([(width-50, 50), (width-50-corner_length, 50)], fill="#d4af37", width=3)
-        draw.line([(width-50, 50), (width-50, 50+corner_length)], fill="#d4af37", width=3)
+        draw.line([(width-margin, margin), (width-margin-corner_length, margin)], fill="#d4af37", width=2)
+        draw.line([(width-margin, margin), (width-margin, margin+corner_length)], fill="#d4af37", width=2)
         # Bottom-left corner
-        draw.line([(50, height-50), (50+corner_length, height-50)], fill="#d4af37", width=3)
-        draw.line([(50, height-50), (50, height-50-corner_length)], fill="#d4af37", width=3)
+        draw.line([(margin, height-margin), (margin+corner_length, height-margin)], fill="#d4af37", width=2)
+        draw.line([(margin, height-margin), (margin, height-margin-corner_length)], fill="#d4af37", width=2)
         # Bottom-right corner
-        draw.line([(width-50, height-50), (width-50-corner_length, height-50)], fill="#d4af37", width=3)
-        draw.line([(width-50, height-50), (width-50, height-50-corner_length)], fill="#d4af37", width=3)
+        draw.line([(width-margin, height-margin), (width-margin-corner_length, height-margin)], fill="#d4af37", width=2)
+        draw.line([(width-margin, height-margin), (width-margin, height-margin-corner_length)], fill="#d4af37", width=2)
 
-        # Subtle background pattern (dots)
-        for i in range(20, width, 40):
-            for j in range(20, height, 40):
+        # Subtle background pattern (dots) - sparser
+        for i in range(50, width, 60):
+            for j in range(50, height, 60):
                 draw.point((i, j), fill="#e8e0d0")
 
-        # Load Logo
-        logo = Image.open("logo.jpeg").resize((160, 160))
-        certificate.paste(logo, (140, 100))
+        # Load Logo - LARGER size (240x240 instead of 160x160)
+        logo = Image.open("logo.jpeg").resize((240, 240))
+        certificate.paste(logo, (180, 100))
 
         try:
-            title_font = ImageFont.truetype("arial.ttf", 75)
-            name_font = ImageFont.truetype("arial.ttf", 110)  # Bigger for name
-            age_font = ImageFont.truetype("arial.ttf", 50)    # Special font for age
-            body_font = ImageFont.truetype("arial.ttf", 42)
-            small_font = ImageFont.truetype("arial.ttf", 35)
+            title_font = ImageFont.truetype("arial.ttf", 70)
+            org_font = ImageFont.truetype("arial.ttf", 65)  # Larger for org name
+            name_font = ImageFont.truetype("arial.ttf", 130)  # Much bigger for name
+            age_font = ImageFont.truetype("arial.ttf", 55)    # Larger for age
+            body_font = ImageFont.truetype("arial.ttf", 48)   # Larger body text
+            small_font = ImageFont.truetype("arial.ttf", 40)
         except:
             title_font = ImageFont.load_default()
+            org_font = ImageFont.load_default()
             name_font = ImageFont.load_default()
             age_font = ImageFont.load_default()
             body_font = ImageFont.load_default()
             small_font = ImageFont.load_default()
 
-        # Organization Name
-        draw.text((350, 165),
-                  "THREE ARROWS FAMILY",
-                  font=body_font,
-                  fill="#2c5f2d")
+        # Organization Name - BOLD and CENTERED, positioned to the right of logo
+        org_text = "THREE ARROWS FAMILY"
+        # Get text size to center it properly
+        bbox = draw.textbbox((0, 0), org_text, font=org_font)
+        text_width = bbox[2] - bbox[0]
+        org_x = (width - text_width) // 2  # Center horizontally
+        draw.text((org_x, 220),
+                  org_text,
+                  font=org_font,
+                  fill="#2c5f2d",
+                  stroke_width=2,
+                  stroke_fill="#1a3f1a")
 
         # Certificate Title with decorative line
         title = "Certificate of Digital Discipline"
@@ -175,61 +185,80 @@ if generate:
                   anchor="mm")
         
         # Decorative line under title
-        draw.line([(width/2-200, 430), (width/2+200, 430)], fill="#d4af37", width=2)
+        draw.line([(width/2-250, 430), (width/2+250, 430)], fill="#d4af37", width=3)
 
-        # Name in GOLD (BIG & BOLD)
+        # Name in GOLD - VERY BIG AND BOLD
+        name_upper = name.upper()
         draw.text((width/2, 550),
-                  name.upper(),
+                  name_upper,
                   font=name_font,
                   fill="#b8860b",  # Gold color
                   anchor="mm",
-                  stroke_width=1,
+                  stroke_width=2,
                   stroke_fill="#8b6910")
 
-        # Age in BLUE (different color)
-        draw.text((width/2, 640),
+        # Age in BLUE - BIGGER
+        draw.text((width/2, 650),
                   f"Age: {age} Years",
                   font=age_font,
                   fill="#1e4b8c",  # Deep blue
-                  anchor="mm")
+                  anchor="mm",
+                  stroke_width=1,
+                  stroke_fill="#0a2351")
 
         today = datetime.date.today().strftime("%d %B %Y")
 
-        # Main body text with inspiring points
-        body_text = f"""has made a conscious decision to embrace digital wellbeing and mindful living.
-
-🌟 Digital Balance Commitment 🌟
-
-By reducing daily screen time from {hours} hours, you're choosing to:
-• Reclaim precious moments for real connections
-• Nurture your mental clarity and focus
-• Discover joy in offline activities
-• Build stronger relationships with loved ones
-
-"Every minute away from the screen is an investment in yourself."
-
-This pledge is voluntarily made on {today}"""
-
-        draw.multiline_text((width/2, 830),
-                            body_text,
+        # Main body text - LARGER and more prominent
+        intro_text = "has made a conscious decision to embrace digital wellbeing and mindful living"
+        draw.multiline_text((width/2, 750),
+                            intro_text,
                             font=body_font,
                             fill="#2c3e50",
                             anchor="mm",
                             align="center",
-                            spacing=25)
+                            spacing=10)
 
-        # Inspirational quote at bottom
-        quote = "🌱 Small changes lead to extraordinary transformations 🌱"
+        # Digital Balance Commitment - BIGGER HEADER
+        draw.text((width/2, 830),
+                  "🌟 Digital Balance Commitment 🌟",
+                  font=body_font,
+                  fill="#6b8e23",
+                  anchor="mm")
+
+        # Benefits text - LARGER
+        benefits = f"""By reducing daily screen time from {hours} hours, you're choosing to:
+• Reclaim precious moments for real connections
+• Nurture your mental clarity and focus
+• Discover joy in offline activities
+• Build stronger relationships with loved ones"""
+
+        draw.multiline_text((width/2, 930),
+                            benefits,
+                            font=small_font,
+                            fill="#2c3e50",
+                            anchor="mm",
+                            align="center",
+                            spacing=15)
+
+        # Inspirational quote at bottom - BIGGER
+        quote = "✨ Every minute away from the screen is an investment in yourself! ✨"
         draw.text((width/2, 1050),
                   quote,
-                  font=small_font,
-                  fill="#6b8e23",
+                  font=body_font,
+                  fill="#b8860b",
                   anchor="mm")
 
         # Minimal certificate number
         cert_number = f"Cert No: 3AF-{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}"
-        draw.text((width-200, height-60),
+        draw.text((width-200, height-80),
                   cert_number,
+                  font=small_font,
+                  fill="#a9a9a9",
+                  anchor="mm")
+
+        # Date at bottom
+        draw.text((200, height-80),
+                  f"Date: {today}",
                   font=small_font,
                   fill="#a9a9a9",
                   anchor="mm")
