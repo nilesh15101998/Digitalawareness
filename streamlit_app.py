@@ -136,7 +136,7 @@ if generate:
         draw.text((x_right, 480), "ADOPT REAL LIFE:", font=f_side_title, fill=GOLD)
         activities = [
             "• Connect with society",
-            "• Adopt sports & discipline",
+            "• Adopt sports",
             "• Serve and volunteer",
             "• Set clear goals"
         ]
