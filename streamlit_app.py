@@ -7,7 +7,7 @@ import hashlib
 # --- PAGE CONFIGURATION ---
 st.set_page_config(page_title="Three Arrows Family", page_icon="🏹", layout="wide")
 
-# --- WEBSITE UI STYLING ---
+# --- PROFESSIONAL WEBSITE UI STYLING ---
 st.markdown("""
 <style>
 .stApp {
@@ -20,7 +20,7 @@ st.markdown("""
     text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
     margin: 0;
 }
-/* Name input visibility */
+/* Input visibility for M.Tech project standards */
 [data-testid="stTextInput"] input {
     background-color: #f0f8ff !important;
     color: #004d40 !important; 
@@ -46,7 +46,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# --- HEADER ---
+# --- WEBSITE HEADER ---
 header_col1, header_col2 = st.columns([1, 6])
 with header_col1:
     try:
@@ -55,7 +55,7 @@ with header_col1:
         st.write("🏹")
 with header_col2:
     st.markdown("<div class='org-title'>THREE ARROWS FAMILY</div>", unsafe_allow_html=True)
-    st.markdown("<p style='color:white; font-size:18px;'>Step Out of the Phone, Step Into Life | Digital Wellness Discipline</p>", unsafe_allow_html=True)
+    st.markdown("<p style='color:white; font-size:18px;'>Step Out of the Phone, Step Into Life | Digital Wellness Initiative</p>", unsafe_allow_html=True)
 
 st.markdown("---")
 
@@ -86,18 +86,22 @@ if generate:
     if not name or not consent:
         st.error("⚠️ Please provide your Name and accept the pledge first!")
     else:
+        # 1. Canvas Setup
         width, height = 1800, 1300 
         DEEP_BLUE, GOLD, CREAM = "#1B4D3E", "#C5A028", "#FDFBF7"
         cert = Image.new("RGB", (width, height), CREAM)
         draw = ImageDraw.Draw(cert)
 
+        # Unique ID Generation
         unique_hash = hashlib.md5(f"{name}{datetime.datetime.now()}".encode()).hexdigest()[:4].upper()
         cert_id = f"3AF-2026-{unique_hash}"
 
-        # Border
+        # 2. Strict Boundary Borders
+        margin_inner = 70
         draw.rectangle([(40, 40), (width-40, height-40)], outline=GOLD, width=20)
-        draw.rectangle([(70, 70), (width-70, height-70)], outline=DEEP_BLUE, width=4)
+        draw.rectangle([(margin_inner, margin_inner), (width-margin_inner, height-margin_inner)], outline=DEEP_BLUE, width=4)
 
+        # 3. Custom Fonts (Using Playfair and Montserrat files from your repo)
         try:
             f_branding = ImageFont.truetype("PlayfairDisplay-Bold.ttf", 100) 
             f_title = ImageFont.truetype("PlayfairDisplay-Bold.ttf", 80)
@@ -109,7 +113,7 @@ if generate:
         except:
             f_branding = f_title = f_name = f_body = f_side_title = f_side_body = f_footer = ImageFont.load_default()
 
-        # Assets
+        # 4. Corner Assets
         try:
             logo_img = Image.open("logo.jpeg").resize((220, 220))
             cert.paste(logo_img, (110, 110))
@@ -117,40 +121,43 @@ if generate:
             cert.paste(qr_img, (width - 320, 110))
         except: pass
 
-        # Left Side: Adopt Real Life (Moved to left as requested)
+        # 5. SIDEBAR CONTENT
+        # Left Side: Adopt Real Life (as requested in previous turn)
         x_left = 130
         draw.text((x_left, 480), "ADOPT REAL LIFE:", font=f_side_title, fill=GOLD)
         activities = ["• Connect with society deeply", "• Adopt sports and discipline", "• Serve and volunteer daily", "• Set and pursue clear goals"]
         for i, a in enumerate(activities):
             draw.text((x_left, 540 + (i*55)), a, font=f_side_body, fill=DEEP_BLUE)
 
-        # Right Side: Key Findings (Moved to right to maintain balance)
-        x_right = width - 580
+        # Right Side: Key Findings (Shifted right as requested)
+        x_right = width - 600
         draw.text((x_right, 480), "KEY FINDINGS (2023-2025):", font=f_side_title, fill=GOLD)
         findings = ["• Short videos = repeated hits", "• More dopamine = less motivation", "• Passive scrolling = anxiety", "• Pleasure steals confidence"]
         for i, f in enumerate(findings):
             draw.text((x_right, 540 + (i*55)), f, font=f_side_body, fill=DEEP_BLUE)
 
-        # Central Header Content
+        # 6. CENTRAL CONTENT
         draw.text((width//2, 220), "THREE ARROWS FAMILY", font=f_branding, fill=DEEP_BLUE, anchor="mm")
         draw.text((width//2, 300), "A Shared Service Since 2014 | Step Into Life", font=f_body, fill=GOLD, anchor="mm")
         draw.text((width//2, 420), "CERTIFICATE OF DIGITAL DISCIPLINE", font=f_title, fill=DEEP_BLUE, anchor="mm")
 
-        # Name: Centered and positioned up from commitment
-        draw.text((width//2, 600), "PROUDLY PRESENTED TO:", font=f_body, fill="#555555", anchor="mm")
-        draw.text((width//2, 730), name.upper(), font=f_name, fill=DEEP_BLUE, anchor="mm")
+        # Name: Moved further down for better layout
+        draw.text((width//2, 650), "PROUDLY PRESENTED TO:", font=f_body, fill="#555555", anchor="mm")
+        draw.text((width//2, 780), name.upper(), font=f_name, fill=DEEP_BLUE, anchor="mm")
 
-        # Commitment Pledge (Bottom Center)
-        draw.text((width//2, 980), "COMMITMENT PLEDGE", font=f_title, fill=DEEP_BLUE, anchor="mm")
+        # Commitment Pledge (Positioned below name)
+        draw.text((width//2, 1000), "COMMITMENT PLEDGE", font=f_title, fill=DEEP_BLUE, anchor="mm")
         pledge_text = f"Reducing daily screen time from {hours} hours to reclaim focus and confidence.\nPrioritizing the Real World over the Virtual World."
-        draw.multiline_text((width//2, 1070), pledge_text, font=f_body, fill="#333333", anchor="mm", align="center")
+        draw.multiline_text((width//2, 1090), pledge_text, font=f_body, fill="#333333", anchor="mm", align="center")
 
-        # Footer
+        # 7. FOOTER (Safely inside boundaries)
+        footer_y = 1180
         today = datetime.date.today().strftime("%d %B %Y")
-        draw.text((150, 1220), f"Date: {today}", font=f_footer, fill="#777777")
-        draw.text((width//2, 1220), f"Verification ID: {cert_id}", font=f_footer, fill=DEEP_BLUE, anchor="mm")
-        draw.text((width-500, 1220), "Verify at: www.threearrowsfamily.org.in", font=f_footer, fill="#777777")
+        draw.text((150, footer_y), f"Date: {today}", font=f_footer, fill="#777777")
+        draw.text((width//2, footer_y), f"Verification ID: {cert_id}", font=f_footer, fill=DEEP_BLUE, anchor="mm")
+        draw.text((width-500, footer_y), "Verify at: www.threearrowsfamily.org.in", font=f_footer, fill="#777777")
 
+        # 8. OUTPUT
         buf = io.BytesIO()
         cert.save(buf, format="JPEG", quality=100)
         st.markdown("---")
