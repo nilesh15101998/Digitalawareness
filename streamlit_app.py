@@ -132,7 +132,7 @@ if generate:
         # Right Side: Key Findings (Positioned right)
         x_right = width - 600
         draw.text((x_right, 480), "KEY FINDINGS (2023-2025):", font=f_side_title, fill=GOLD)
-        findings = ["• Short videos = repeated hits", "• More dopamine = less motivation", "• Passive scrolling = anxiety", "• Pleasure steals confidence"]
+        findings = ["• Short videos = repeated hits", "• More dopamine = less energy", "• Passive scrolling = anxiety", "• Pleasure steals confidence"]
         for i, f in enumerate(findings):
             draw.text((x_right, 540 + (i*55)), f, font=f_side_body, fill=DEEP_BLUE)
 
@@ -149,7 +149,7 @@ if generate:
 
         # Commitment Pledge: Positioned below name
         draw.text((width//2, 1030), "COMMITMENT PLEDGE", font=f_title, fill=DEEP_BLUE, anchor="mm")
-        pledge_text = f"Reducing daily screen time from {hours} hours to reclaim focus and confidence.\nPrioritizing the Real World over the Virtual World."
+        pledge_text = f"Reducing daily screen time from {hours} hours to 2 hours for reclaim focus and confidence.\nPrioritizing the Real World over the Virtual World."
         draw.multiline_text((width//2, 1120), pledge_text, font=f_body, fill="#333333", anchor="mm", align="center")
 
         # 7. FOOTER (Strictly within boundaries)
@@ -159,7 +159,6 @@ if generate:
         
         # Left-aligned footer information
         draw.text((150, footer_y_base), f"Date: {today}", font=f_footer, fill="#777777")
-        draw.text((150, footer_y_secondary), "Verify at: www.threearrowsfamily.org.in", font=f_footer, fill="#777777")
         
         # Center-aligned Verification ID
         draw.text((width//2, footer_y_base), f"Verification ID: {cert_id}", font=f_footer, fill=DEEP_BLUE, anchor="mm")
