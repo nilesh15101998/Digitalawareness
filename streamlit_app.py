@@ -7,20 +7,23 @@ import hashlib
 # --- PAGE CONFIGURATION ---
 st.set_page_config(page_title="Three Arrows Family", page_icon="🏹", layout="wide")
 
-# --- PROFESSIONAL WEBSITE UI ---
+# --- PROFESSIONAL WEBSITE UI STYLING ---
 st.markdown("""
 <style>
 .stApp {
     background: linear-gradient(135deg, #0d3b2e 0%, #1b5e46 50%, #0a4d34 100%);
 }
+
 .org-title {
-    font-size: 52px;
+    font-size: 48px;
     font-weight: 900;
     color: #FFD700;
-    text-align: center;
     text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    margin: 0;
+    padding: 0;
 }
-/* HIGH-VISIBILITY INPUTS */
+
+/* Fix for name input visibility */
 [data-testid="stTextInput"] input {
     background-color: #f0f8ff !important;
     color: #004d40 !important; 
@@ -28,6 +31,7 @@ st.markdown("""
     font-size: 22px !important;
     font-weight: 800 !important;
 }
+
 .pledge-card {
     background: rgba(255, 255, 255, 0.15);
     padding: 25px;
@@ -35,6 +39,7 @@ st.markdown("""
     border: 2px solid #FFD700;
     color: white;
 }
+
 .stButton > button {
     background: linear-gradient(90deg, #FFD700, #FFA500);
     color: #0d3b2e;
@@ -46,19 +51,29 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# --- HEADER ---
-st.markdown("<div class='org-title'>THREE ARROWS FAMILY</div>", unsafe_allow_html=True)
-st.markdown("<h3 style='text-align:center; color:white;'>Digital Wellness Discipline Portal</h3>", unsafe_allow_html=True)
+# --- WEBSITE HEADER ---
+# Logo appears near the title as requested
+header_col1, header_col2 = st.columns([1, 6])
+with header_col1:
+    try:
+        st.image("logo.jpeg", width=120)
+    except:
+        st.write("🏹")
+with header_col2:
+    st.markdown("<div class='org-title'>THREE ARROWS FAMILY</div>", unsafe_allow_html=True)
+    st.markdown("<p style='color:white; font-size:18px;'>Step Out of the Phone, Step Into Life | Digital Wellness Discipline</p>", unsafe_allow_html=True)
 
-# --- INPUT SECTION ---
+st.markdown("---")
+
+# --- USER INPUT SECTION ---
 col1, col2 = st.columns(2)
 with col1:
-    name = st.text_input("👤 FULL NAME", placeholder="Type your name here...")
-    hours = st.slider("📱 CURRENT SCREEN TIME (HRS)", 0, 15, 4)
+    name = st.text_input("👤 FULL NAME", placeholder="Type your full name...")
+    hours = st.slider("📱 DAILY SCREEN TIME (HRS)", 0, 15, 4)
 
 with col2:
     age_input = st.text_input("🎂 YOUR AGE", placeholder="e.g. 26 Years")
-    st.info("💡 Step Out of the Phone, Step Into Life!")
+    st.info("💡 Today's easy pleasure steals Tomorrow's confidence!")
 
 # --- THE PLEDGE ---
 st.markdown("""
@@ -84,22 +99,20 @@ if generate:
         cert = Image.new("RGB", (width, height), CREAM)
         draw = ImageDraw.Draw(cert)
 
-        # Unique ID
+        # Unique ID Generation
         unique_hash = hashlib.md5(f"{name}{datetime.datetime.now()}".encode()).hexdigest()[:4].upper()
         cert_id = f"3AF-2026-{unique_hash}"
 
-        # 2. Strict Boundary Borders
-        margin_outer = 40
-        margin_inner = 70
-        draw.rectangle([(margin_outer, margin_outer), (width-margin_outer, height-margin_outer)], outline=GOLD, width=20)
-        draw.rectangle([(margin_inner, margin_inner), (width-margin_inner, height-margin_inner)], outline=DEEP_BLUE, width=4)
+        # 2. Border Design
+        draw.rectangle([(40, 40), (width-40, height-40)], outline=GOLD, width=20)
+        draw.rectangle([(70, 70), (width-70, height-70)], outline=DEEP_BLUE, width=4)
 
-        # 3. Custom Fonts (Playfair for Titles, Montserrat for Body)
+        # 3. Custom Fonts (Using your Playfair and Montserrat files)
         try:
             f_branding = ImageFont.truetype("PlayfairDisplay-Bold.ttf", 100) 
             f_title = ImageFont.truetype("PlayfairDisplay-Bold.ttf", 80)
             f_name = ImageFont.truetype("PlayfairDisplay-Bold.ttf", 155)
-            f_body = ImageFont.truetype("Montserrat-Regular.ttf", 42)
+            f_body = ImageFont.truetype("Montserrat-Regular.ttf", 40)
             f_side_title = ImageFont.truetype("PlayfairDisplay-Bold.ttf", 42)
             f_side_body = ImageFont.truetype("Montserrat-Regular.ttf", 34)
             f_footer = ImageFont.truetype("Montserrat-Regular.ttf", 28)
@@ -109,64 +122,64 @@ if generate:
 
         # 4. Corner Assets (Top-aligned)
         try:
-            logo = Image.open("logo.jpeg").resize((220, 220))
-            cert.paste(logo, (110, 110))
+            logo_img = Image.open("logo.jpeg").resize((220, 220))
+            cert.paste(logo_img, (110, 110))
         except: pass
 
         try:
-            qr = Image.open("qr_code.png").resize((200, 200))
-            cert.paste(qr, (width - 320, 110))
+            qr_img = Image.open("qr_code.png").resize((200, 200))
+            cert.paste(qr_img, (width - 320, 110))
         except: pass
 
-        # 5. SIDEBAR CONTENT (Aligned to boundaries)
-        # Left Side: Key Findings
+        # 5. SIDEBAR CONTENT (Left & Right)
+        # Left Side: Key Findings from Infographic
         x_left = 130
-        draw.text((x_left, 480), "KEY FINDINGS:", font=f_side_title, fill=GOLD)
+        draw.text((x_left, 450), "KEY FINDINGS (2023-2025):", font=f_side_title, fill=GOLD)
         findings = [
-            "• Short videos = repeated hits",
+            "• Short videos = repeated dopamine hits",
             "• More dopamine = less motivation",
-            "• Passive scrolling = anxiety",
-            "• Screen time steals confidence"
+            "• Passive scrolling = anxiety & emptiness",
+            "• Pleasure steals Tomorrow's confidence"
         ]
         for i, f in enumerate(findings):
-            draw.text((x_left, 540 + (i*55)), f, font=f_side_body, fill=DEEP_BLUE)
+            draw.text((x_left, 510 + (i*55)), f, font=f_side_body, fill=DEEP_BLUE)
+
+        # NAME BELOW KEY FINDINGS (Per user request)
+        draw.text((x_left, 780), "PROUDLY PRESENTED TO:", font=f_side_title, fill=GOLD)
+        draw.text((x_left, 850), name.upper(), font=f_name, fill=DEEP_BLUE)
 
         # Right Side: Real Life Activities
-        x_right = width - 460
-        draw.text((x_right, 480), "ADOPT REAL LIFE:", font=f_side_title, fill=GOLD)
+        x_right = width - 530
+        draw.text((x_right, 450), "ADOPT REAL LIFE:", font=f_side_title, fill=GOLD)
         activities = [
-            "• Connect with society",
-            "• Adopt sports",
-            "• Serve and volunteer",
-            "• Set clear goals"
+            "• Connect with society deeply",
+            "• Adopt sports and discipline",
+            "• Serve and volunteer daily",
+            "• Set and pursue clear goals"
         ]
         for i, a in enumerate(activities):
-            draw.text((x_right, 540 + (i*55)), a, font=f_side_body, fill=DEEP_BLUE)
+            draw.text((x_right, 510 + (i*55)), a, font=f_side_body, fill=DEEP_BLUE)
 
         # 6. CENTRAL TEXT CONTENT
         draw.text((width//2, 220), "THREE ARROWS FAMILY", font=f_branding, fill=DEEP_BLUE, anchor="mm")
         draw.text((width//2, 300), "A Sacred Service Since 2014 | Step Into Life", font=f_body, fill=GOLD, anchor="mm")
         draw.text((width//2, 420), "CERTIFICATE OF DIGITAL DISCIPLINE", font=f_title, fill=DEEP_BLUE, anchor="mm")
 
-        # Recipient Section (Name shifted slightly right)
-        draw.text((width//2 + 50, 560), "PROUDLY PRESENTED TO", font=f_body, fill="#555555", anchor="mm")
-        draw.text((width//2 + 50, 690), name.upper(), font=f_name, fill=DEEP_BLUE, anchor="mm")
-        
-        # Commitment Statement (Centered)
-        draw.text((width//2, 900), "COMMITMENT PLEDGE", font=f_title, fill=DEEP_BLUE, anchor="mm")
-        pledge_text = f"Reducing daily screen time from {hours} hours to regain focus and confidence.\nPrioritizing the Real World over the Virtual World."
-        draw.multiline_text((width//2, 1000), pledge_text, font=f_body, fill="#333333", anchor="mm", align="center")
+        # Commitment Statement (Bottom Center)
+        draw.text((width//2, 1020), "COMMITMENT PLEDGE", font=f_title, fill=DEEP_BLUE, anchor="mm")
+        pledge_text = f"Reducing daily screen time from {hours} hours to reclaim focus and confidence.\nPrioritizing the Real World over the Virtual World."
+        draw.multiline_text((width//2, 1110), pledge_text, font=f_body, fill="#333333", anchor="mm", align="center")
 
-        # 7. FOOTER (Strictly at the bottom boundary)
+        # 7. FOOTER
         today = datetime.date.today().strftime("%d %B %Y")
-        draw.text((150, 1180), f"Date: {today}", font=f_footer, fill="#777777")
-        draw.text((width//2, 1180), f"Verification ID: {cert_id}", font=f_footer, fill=DEEP_BLUE, anchor="mm")
-        draw.text((width-500, 1180), "Verify at: www.threearrowsfamily.org.in", font=f_footer, fill="#777777")
+        draw.text((150, 1220), f"Date: {today}", font=f_footer, fill="#777777")
+        draw.text((width//2, 1220), f"Verification ID: {cert_id}", font=f_footer, fill=DEEP_BLUE, anchor="mm")
+        draw.text((width-500, 1220), "Verify at: www.threearrowsfamily.org.in", font=f_footer, fill="#777777")
 
         # 8. OUTPUT
         buf = io.BytesIO()
         cert.save(buf, format="JPEG", quality=100)
         st.markdown("---")
         st.image(cert, use_container_width=True)
-        st.download_button("📥 DOWNLOAD MY OFFICIAL CERTIFICATE", data=buf.getvalue(), file_name=f"Wellness_Cert_{cert_id}.jpg", mime="image/jpeg", use_container_width=True)
+        st.download_button("📥 DOWNLOAD MY OFFICIAL CERTIFICATE", data=buf.getvalue(), file_name=f"Digital_Discipline_{cert_id}.jpg", mime="image/jpeg", use_container_width=True)
         st.balloons()
