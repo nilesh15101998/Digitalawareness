@@ -71,15 +71,15 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 consent = st.checkbox("✅ I accept this pledge for a better Digital Wellness")
-generate = st.button("🎨 GENERATE MY BIG-FONT CERTIFICATE", use_container_width=True)
+generate = st.button("🎨 GENERATE MY CERTIFICATE", use_container_width=True)
 
 # --- CERTIFICATE GENERATION ---
 if generate:
     if not name or not age or not consent:
-        st.error("⚠️ Please provide your Name, Age, and accept the pledge!")
+        st.error("⚠️ Please provide your Name, Age, and accept the pledge first!")
     else:
         # 1. Canvas & Color Palette
-        width, height = 1800, 1300 # Larger canvas for bigger text
+        width, height = 1800, 1300 
         DEEP_BLUE, GOLD, CREAM = "#1B4D3E", "#C5A028", "#FDFBF7"
         cert = Image.new("RGB", (width, height), CREAM)
         draw = ImageDraw.Draw(cert)
@@ -92,17 +92,22 @@ if generate:
         draw.rectangle([(40, 40), (width-40, height-40)], outline=GOLD, width=20)
         draw.rectangle([(70, 70), (width-70, height-70)], outline=DEEP_BLUE, width=4)
 
-        # 3. Extra Large Fonts (Uploading .ttf to GitHub is recommended)
+        # 3. Custom Fonts Integration
         try:
-            f_branding = ImageFont.truetype("arialbd.ttf", 110) 
-            f_title = ImageFont.truetype("arialbd.ttf", 80)
-            f_name = ImageFont.truetype("arialbd.ttf", 160) # Massive Name
-            f_body = ImageFont.truetype("arial.ttf", 45)
-            f_side = ImageFont.truetype("arialbd.ttf", 35)
-            f_footer = ImageFont.truetype("arial.ttf", 30)
+            # Playfair Display for Titles and Name
+            f_branding = ImageFont.truetype("PlayfairDisplay-Bold.ttf", 100) 
+            f_title = ImageFont.truetype("PlayfairDisplay-Bold.ttf", 75)
+            f_name = ImageFont.truetype("PlayfairDisplay-Bold.ttf", 150)
+            
+            # Montserrat for Body and Sidebar
+            f_body = ImageFont.truetype("Montserrat-Regular.ttf", 40)
+            f_side_title = ImageFont.truetype("PlayfairDisplay-Bold.ttf", 45)
+            f_side_body = ImageFont.truetype("Montserrat-Regular.ttf", 32)
+            f_footer = ImageFont.truetype("Montserrat-Regular.ttf", 28)
         except:
+            # Fallback if files aren't found
             f_branding = f_title = f_name = ImageFont.load_default()
-            f_body = f_side = f_footer = ImageFont.load_default()
+            f_body = f_side_title = f_side_body = f_footer = ImageFont.load_default()
 
         # 4. Assets Positioning
         # Logo - Top Left
@@ -117,33 +122,46 @@ if generate:
             cert.paste(qr, (width - 300, 100))
         except: pass
 
-        # 5. SIDEBAR CONTENT (Fills left and right space)
+        # 5. SIDEBAR CONTENT (Fills space from SS Findings)
         # Left Side: Key Findings
-        draw.text((120, 450), "KEY FINDINGS:", font=f_side, fill=GOLD)
-        findings = ["• Short videos = repeated dopamine", "• More dopamine = less motivation", "• Scrolling = anxiety & emptiness"]
+        draw.text((120, 450), "KEY FINDINGS:", font=f_side_title, fill=GOLD)
+        findings = [
+            "• Short videos = repeated dopamine hits",
+            "• More dopamine = less motivation",
+            "• Passive scrolling = anxiety & emptiness",
+            "• Screen time steals your confidence"
+        ]
         for i, f in enumerate(findings):
-            draw.text((120, 500 + (i*50)), f, font=f_footer, fill=DEEP_BLUE)
+            draw.text((120, 520 + (i*60)), f, font=f_side_body, fill=DEEP_BLUE)
 
         # Right Side: Real Life Activities
-        draw.text((width - 450, 450), "ADOPT REAL LIFE:", font=f_side, fill=GOLD)
-        activities = ["• Connect with society", "• Adopt sports & discipline", "• Serve and volunteer", "• Set clear goals"]
+        draw.text((width - 500, 450), "ADOPT REAL LIFE:", font=f_side_title, fill=GOLD)
+        activities = [
+            "• Connect deeply with society",
+            "• Adopt sports and discipline",
+            "• Serve and volunteer daily",
+            "• Set and pursue clear goals"
+        ]
         for i, a in enumerate(activities):
-            draw.text((width - 450, 500 + (i*50)), a, font=f_footer, fill=DEEP_BLUE)
+            draw.text((width - 500, 520 + (i*60)), a, font=f_side_body, fill=DEEP_BLUE)
 
         # 6. CENTRAL TEXT LAYOUT
         draw.text((width//2, 220), "THREE ARROWS FAMILY", font=f_branding, fill=DEEP_BLUE, anchor="mm")
-        draw.text((width//2, 300), "A Sacred Service Since 2014", font=f_body, fill=GOLD, anchor="mm")
+        draw.text((width//2, 300), "A Sacred Service Since 2014 | Step Out of the Phone", font=f_body, fill=GOLD, anchor="mm")
         draw.text((width//2, 420), "CERTIFICATE OF DIGITAL DISCIPLINE", font=f_title, fill=DEEP_BLUE, anchor="mm")
 
-        # Recipient Section (Large & Readable)
+        # Recipient Section (Large & Elegant)
         draw.text((width//2, 550), "PROUDLY PRESENTED TO", font=f_body, fill="#555555", anchor="mm")
         draw.text((width//2, 680), name.upper(), font=f_name, fill=DEEP_BLUE, anchor="mm")
-        draw.text((width//2, 780), f"AGE: {age.upper()}", font=f_title, fill=GOLD, anchor="mm")
+        
+        # Age Highlight Box (Transparent with Gold Outline)
+        age_text = f"AGE: {age.upper()}"
+        draw.text((width//2, 780), age_text, font=f_title, fill=GOLD, anchor="mm")
 
         # Commitment Statement
-        draw.text((width//2, 900), "COMMITMENT PLEDGE", font=f_title, fill=DEEP_BLUE, anchor="mm")
-        pledge_text = f"Reducing daily screen time from {hours} hours to reclaim focus and confidence.\nStepping Out of the Phone and Stepping Into Life!"
-        draw.multiline_text((width//2, 1000), pledge_text, font=f_body, fill="#333333", anchor="mm", align="center")
+        draw.text((width//2, 920), "COMMITMENT PLEDGE", font=f_title, fill=DEEP_BLUE, anchor="mm")
+        pledge_text = f"Committed to reducing daily screen time from {hours} hours to regain focus.\nStep Into Life and prioritize the Real World over the Virtual."
+        draw.multiline_text((width//2, 1020), pledge_text, font=f_body, fill="#333333", anchor="mm", align="center")
 
         # 7. FOOTER
         today = datetime.date.today().strftime("%d %B %Y")
@@ -156,5 +174,5 @@ if generate:
         cert.save(buf, format="JPEG", quality=100)
         st.markdown("---")
         st.image(cert, use_container_width=True)
-        st.download_button("📥 DOWNLOAD CERTIFICATE", data=buf.getvalue(), file_name=f"Cert_{cert_id}.jpg", mime="image/jpeg", use_container_width=True)
+        st.download_button("📥 DOWNLOAD MY OFFICIAL CERTIFICATE", data=buf.getvalue(), file_name=f"Digital_Discipline_{cert_id}.jpg", mime="image/jpeg", use_container_width=True)
         st.balloons()
