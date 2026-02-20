@@ -156,5 +156,5 @@ if generate:
         cert.save(buf, format="JPEG", quality=100)
         st.markdown("---")
         st.image(cert, use_container_width=True)
-        st.download_button("📥 DOWNLOAD MY BIG-FONT CERTIFICATE", data=buf.getvalue(), file_name=f"Cert_{cert_id}.jpg", mime="image/jpeg", use_container_width=True)
+        st.download_button("📥 DOWNLOAD CERTIFICATE", data=buf.getvalue(), file_name=f"Cert_{cert_id}.jpg", mime="image/jpeg", use_container_width=True)
         st.balloons()
