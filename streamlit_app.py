@@ -3,9 +3,10 @@ from PIL import Image, ImageDraw, ImageFont
 import datetime
 import io
 
+# --- PAGE CONFIGURATION ---
 st.set_page_config(page_title="Three Arrows Family", page_icon="🌿", layout="wide")
 
-# -------------------- WEBSITE DESIGN --------------------
+# --- WEBSITE CSS STYLING ---
 st.markdown("""
 <style>
 .stApp {
@@ -28,31 +29,27 @@ st.markdown("""
     font-weight: 500;
 }
 
-/* Form Styling */
+/* Form Inputs Styling */
 .stTextInput label, .stNumberInput label, .stSlider label {
     color: white !important;
     font-size: 18px !important;
     font-weight: 700 !important;
 }
 
-/* Name input */
 [data-testid="stTextInput"] input {
     background-color: #E8F0FE !important;
     border: 3px solid #FFD700 !important;
     border-radius: 8px;
     font-size: 18px !important;
     font-weight: bold !important;
-    padding: 10px !important;
 }
 
-/* Age input */
 [data-testid="stNumberInput"] input {
     background-color: #FFE5B4 !important;
     border: 3px solid #FFD700 !important;
     border-radius: 8px;
     font-size: 18px !important;
     font-weight: bold !important;
-    padding: 10px !important;
 }
 
 /* Consent section */
@@ -96,11 +93,13 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# -------------------- HEADER --------------------
+# --- HEADER SECTION ---
 col1, col2 = st.columns([1,6])
-
 with col1:
-    st.image("logo.jpeg", width=130)
+    try:
+        st.image("logo.jpeg", width=130)
+    except:
+        st.error("Logo not found")
 
 with col2:
     st.markdown("<div class='org-title'>THREE ARROWS FAMILY</div>", unsafe_allow_html=True)
@@ -108,17 +107,17 @@ with col2:
 
 st.markdown("---")
 
-# -------------------- FORM --------------------
-col1, col2 = st.columns(2)
+# --- USER INPUT FORM ---
+col_f1, col_f2 = st.columns(2)
 
-with col1:
+with col_f1:
     st.markdown("### 👤 FULL NAME")
     name = st.text_input("", placeholder="Enter your full name", label_visibility="collapsed")
     
     st.markdown("### 📱 DAILY SCREEN TIME")
     hours = st.slider("", 0, 15, 3, label_visibility="collapsed")
 
-with col2:
+with col_f2:
     st.markdown("### 🎂 AGE")
     age = st.number_input("", min_value=5, max_value=100, step=1, value=25, label_visibility="collapsed")
 
@@ -129,179 +128,89 @@ st.markdown("""
     <div class='consent-point'>✓ I commit to reducing mindless scrolling by at least 1 hour daily</div>
     <div class='consent-point'>✓ I will prioritize real-world connections over virtual interactions</div>
     <div class='consent-point'>✓ I pledge to be fully present with family and friends</div>
-    <div class='consent-point'>✓ I will use saved time for personal growth and learning</div>
-    <div class='consent-point'>✓ I commit to tracking my screen time weekly</div>
 </div>
 """, unsafe_allow_html=True)
 
 consent = st.checkbox("✅ I understand and accept the Digital Wellbeing Pledge")
 generate = st.button("🎨 GENERATE CERTIFICATE", use_container_width=True)
 
-# -------------------- CERTIFICATE DESIGN --------------------
+# --- CERTIFICATE GENERATION LOGIC ---
 if generate:
-
     if name == "" or not consent:
         st.error("⚠️ Please enter your name and accept the pledge.")
     else:
-        # Certificate dimensions
+        # 1. Canvas Setup
         width, height = 1500, 1050
-        certificate = Image.new("RGB", (width, height), "#FDF5E6")  # Old lace
+        certificate = Image.new("RGB", (width, height), "#FDFBF7") # Cream background
         draw = ImageDraw.Draw(certificate)
 
-        # Elegant border
-        draw.rectangle([(30, 30), (width-30, height-30)], outline="#C5A028", width=5)
-        draw.rectangle([(45, 45), (width-45, height-45)], outline="#F0C45A", width=2)
-        
-        # Corner decorations
-        corner_len = 70
-        corners = [(30,30), (width-30,30), (30,height-30), (width-30,height-30)]
-        for x,y in corners:
-            draw.ellipse([(x-10, y-10), (x+10, y+10)], fill="#C5A028")
+        # 2. Colors & Border
+        GOLD = "#C5A028"
+        DEEP_BLUE = "#1B4D3E"
+        draw.rectangle([(20, 20), (width-20, height-20)], outline=GOLD, width=15)
+        draw.rectangle([(40, 40), (width-40, height-40)], outline=DEEP_BLUE, width=3)
 
+        # 3. Fonts (Default fallbacks included)
         try:
-            # Fonts - All sizes increased
-            reg_font = ImageFont.truetype("arial.ttf", 28)
-            org_font = ImageFont.truetype("arialbd.ttf", 65)  # Bold organization
-            sub_font = ImageFont.truetype("ariali.ttf", 35)
-            title_font = ImageFont.truetype("arialbd.ttf", 60)
-            name_font = ImageFont.truetype("arialbd.ttf", 120)  # Very big name
-            age_font = ImageFont.truetype("arialbd.ttf", 55)
-            body_font = ImageFont.truetype("arial.ttf", 38)  # Bigger body text
-            bold_font = ImageFont.truetype("arialbd.ttf", 42)
-            small_font = ImageFont.truetype("arial.ttf", 30)
+            header_font = ImageFont.truetype("arialbd.ttf", 65)
+            subtitle_font = ImageFont.truetype("ariali.ttf", 35)
+            name_label_font = ImageFont.truetype("arial.ttf", 30)
+            name_text_font = ImageFont.truetype("arialbd.ttf", 110)
+            age_font = ImageFont.truetype("arialbd.ttf", 50)
+            pledge_font = ImageFont.truetype("arial.ttf", 40)
+            footer_font = ImageFont.truetype("arial.ttf", 25)
         except:
-            reg_font = ImageFont.load_default()
-            org_font = ImageFont.load_default()
-            sub_font = ImageFont.load_default()
-            title_font = ImageFont.load_default()
-            name_font = ImageFont.load_default()
-            age_font = ImageFont.load_default()
-            body_font = ImageFont.load_default()
-            bold_font = ImageFont.load_default()
-            small_font = ImageFont.load_default()
+            header_font = name_text_font = age_font = ImageFont.load_default()
 
-        # Logo on LEFT (position 50, 40)
+        # 4. Header & Logo
         try:
-            logo = Image.open("logo.jpeg").resize((160, 160))
-            certificate.paste(logo, (50, 40))
+            logo_cert = Image.open("logo.jpeg").resize((180, 180))
+            certificate.paste(logo_cert, (width//2 - 90, 60))
         except:
             pass
 
-        # Registration number (top, aligned with logo)
-        draw.text((230, 70), "REG: 2025013310014127", font=reg_font, fill="#666666")
+        draw.text((width//2, 280), "THREE ARROWS FAMILY", font=header_font, fill=DEEP_BLUE, anchor="mm")
+        draw.text((width//2, 340), "A Sacred Service Since 2014", font=subtitle_font, fill=GOLD, anchor="mm")
+        draw.text((width//2, 400), "CERTIFICATE OF DIGITAL DISCIPLINE", font=header_font, fill=DEEP_BLUE, anchor="mm")
 
-        # THREE ARROWS FAMILY - CENTERED and BOLD
-        org_text = "THREE ARROWS FAMILY"
-        bbox = draw.textbbox((0, 0), org_text, font=org_font)
-        org_width = bbox[2] - bbox[0]
-        org_x = (width - org_width) // 2
-        # Shadow effect
-        draw.text((org_x+3, 103), org_text, font=org_font, fill="#888888")
-        draw.text((org_x, 100), org_text, font=org_font, fill="#1B4D3E")
-
-        # A Shared Service Since 2014 - Centered
-        service_text = "A Shared Service Since 2014"
-        bbox = draw.textbbox((0, 0), service_text, font=sub_font)
-        service_width = bbox[2] - bbox[0]
-        service_x = (width - service_width) // 2
-        draw.text((service_x, 170), service_text, font=sub_font, fill="#C5A028")
-
-        # Certificate Title - Centered
-        title = "CERTIFICATE OF DIGITAL DISCIPLINE"
-        bbox = draw.textbbox((0, 0), title, font=title_font)
-        title_width = bbox[2] - bbox[0]
-        title_x = (width - title_width) // 2
-        draw.text((title_x, 240), title, font=title_font, fill="#1B4D3E")
-
-        # Decorative line
-        draw.line([(width/2-300, 310), (width/2+300, 310)], fill="#C5A028", width=4)
-
-        # NAME WITH BOX - BIG and BOLD
+        # 5. NAME SECTION (Contrasting Blue Background)
         name_upper = name.upper()
-        bbox = draw.textbbox((0, 0), name_upper, font=name_font)
-        name_width = bbox[2] - bbox[0]
-        name_height = bbox[3] - bbox[1]
-        name_x = (width - name_width) // 2
+        box_w, box_h = 1000, 160
+        box_x, box_y = (width - box_w) // 2, 480
+        draw.rectangle([(box_x, box_y), (box_x + box_w, box_y + box_h)], fill="#E8F0FE", outline=GOLD, width=4)
         
-        # Box around name (light blue background with border)
-        box_padding = 40
-        draw.rectangle([(name_x-box_padding, 350), 
-                       (name_x+name_width+box_padding, 350+name_height+box_padding)], 
-                      fill="#E8F0FE", outline="#C5A028", width=4)
-        
-        # Name text
-        draw.text((name_x, 370), name_upper, font=name_font, fill="#1B4D3E")
+        draw.text((width//2, box_y + 30), "THIS IS PROUDLY PRESENTED TO", font=name_label_font, fill="#666666", anchor="mm")
+        draw.text((width//2, box_y + 100), name_upper, font=name_text_font, fill=DEEP_BLUE, anchor="mm")
 
-        # AGE with yellow background
-        age_text = f"Age: {age} Years"
-        bbox = draw.textbbox((0, 0), age_text, font=age_font)
-        age_width = bbox[2] - bbox[0]
-        age_x = (width - age_width) // 2
-        
-        draw.rectangle([(age_x-20, 550), (age_x+age_width+20, 620)], 
-                      fill="#FFE5B4", outline="#C5A028", width=3)
-        draw.text((age_x, 580), age_text, font=age_font, fill="#1B4D3E")
+        # 6. AGE SECTION (Contrasting Yellow Background)
+        age_text = f"AGE: {age} YEARS"
+        age_box_w, age_box_h = 400, 80
+        age_x, age_y = (width - age_box_w) // 2, 660
+        draw.rectangle([(age_x, age_y), (age_x + age_box_w, age_y + age_box_h)], fill="#FFE5B4", outline=DEEP_BLUE, width=3)
+        draw.text((width//2, age_y + 40), age_text, font=age_font, fill=DEEP_BLUE, anchor="mm")
 
+        # 7. THE PLEDGE
+        reduction = f"Committing to reduce daily scrolling from {hours} hrs to {max(1, hours-1)} hrs."
+        draw.text((width//2, 800), "Has pledged to reclaim time for real-life activities and wellness.", font=pledge_font, fill="#333333", anchor="mm")
+        draw.text((width//2, 860), reduction, font=pledge_font, fill=DEEP_BLUE, anchor="mm")
+
+        # 8. FOOTER
         today = datetime.date.today().strftime("%d %B %Y")
+        draw.text((150, 950), f"Date: {today}", font=footer_font, fill="#666666")
+        draw.text((width-450, 950), f"Verify: www.threearrowsfamily.org.in", font=footer_font, fill="#666666")
 
-        # Pledge text - BIGGER
-        pledge = "has made a conscious decision to embrace digital wellbeing and mindful living"
-        bbox = draw.textbbox((0, 0), pledge, font=body_font)
-        pledge_width = bbox[2] - bbox[0]
-        pledge_x = (width - pledge_width) // 2
-        draw.text((pledge_x, 670), pledge, font=body_font, fill="#333333")
-
-        # DIGITAL BALANCE COMMITMENT - BIGGER
-        commitment = "✦ DIGITAL BALANCE COMMITMENT ✦"
-        bbox = draw.textbbox((0, 0), commitment, font=bold_font)
-        commit_width = bbox[2] - bbox[0]
-        commit_x = (width - commit_width) // 2
-        draw.text((commit_x, 750), commitment, font=bold_font, fill="#C5A028")
-
-        # Benefits with bullet points - BIGGER TEXT
-        benefits = [
-            f"• Reducing daily screen time from {hours} to {max(1, hours-1)} hours daily",
-            "• Prioritizing face-to-face conversations with family and friends",
-            "• Engaging in physical activities and outdoor experiences",
-            "• Reading books and learning new skills for personal growth",
-            "• Being fully present without digital distractions"
-        ]
-        
-        y_position = 820
-        for benefit in benefits:
-            bbox = draw.textbbox((0, 0), benefit, font=body_font)
-            benefit_width = bbox[2] - bbox[0]
-            benefit_x = (width - benefit_width) // 2
-            draw.text((benefit_x, y_position), benefit, font=body_font, fill="#333333")
-            y_position += 45
-
-        # Bottom info
-        draw.text((100, height-80), f"Date: {today}", font=small_font, fill="#666666")
-        draw.text((width-350, height-80), f"ID: 3AF-{datetime.datetime.now().strftime('%Y%m%d')}", font=small_font, fill="#666666")
-
-        # Inspirational quote
-        quote = "✨ Every minute away from the screen is an investment in yourself! ✨"
-        bbox = draw.textbbox((0, 0), quote, font=bold_font)
-        quote_width = bbox[2] - bbox[0]
-        quote_x = (width - quote_width) // 2
-        draw.text((quote_x, height-120), quote, font=bold_font, fill="#C5A028")
-
-        # Save certificate
+        # 9. OUTPUT
         buffer = io.BytesIO()
-        certificate.save(buffer, format="JPEG", quality=100, optimize=True)
+        certificate.save(buffer, format="JPEG", quality=100)
         buffer.seek(0)
 
-        # Display
-        st.markdown("## 🎉 YOUR CERTIFICATE IS READY")
-        st.image(certificate, use_column_width=True)
-
+        st.markdown("---")
+        st.image(certificate, use_container_width=True)
         st.download_button(
-            label="📥 DOWNLOAD CERTIFICATE (JPEG)",
+            label="📥 DOWNLOAD YOUR PLEDGE CERTIFICATE",
             data=buffer,
-            file_name=f"{name}_digital_discipline_certificate.jpg",
+            file_name=f"Wellness_Cert_{name.replace(' ', '_')}.jpg",
             mime="image/jpeg",
             use_container_width=True
         )
-
         st.balloons()
-        st.success("✨ Congratulations on your commitment to digital wellness!")
